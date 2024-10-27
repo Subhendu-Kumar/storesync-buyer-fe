@@ -21,7 +21,7 @@ const Navbar = ({ storeName }: { storeName: string }) => {
           return (
             <Link
               key={idx}
-              href={`/${storeName}`}
+              href={`/${storeName}/${data.path}`}
               className="cursor-pointer capitalize hover:text-blue-500 hover:scale-105 transition-all duration-200 ease-in-out"
             >
               {data.name}
