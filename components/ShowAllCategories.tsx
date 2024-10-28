@@ -2,22 +2,28 @@
 
 import {
   Card,
-  CardContent,
-  CardDescription,
+  CardTitle,
   CardFooter,
   CardHeader,
-  CardTitle,
+  CardContent,
+  CardDescription,
 } from "@/components/ui/card";
 import Image from "next/image";
-import CategoryDemoImage from "@/public/demo-category-img.jpg";
-import { useEffect, useState } from "react";
-import { getStoreIdFromLocalStorage } from "@/lib/utils";
+import { Button } from "./ui/button";
 import { getCategories } from "@/api";
 import { CategoryResponse } from "@/types";
+import { useEffect, useState } from "react";
+import { getStoreIdFromLocalStorage } from "@/lib/utils";
+import CategoryDemoImage from "@/public/demo-category-img.jpg";
 import CategoryCardSkeleton from "./skeleton_loaders/CategoryCardSkeleton";
-import { Button } from "./ui/button";
+import { useParams, useRouter } from "next/navigation";
 
 const ShowAllCategories = () => {
+  const router = useRouter();
+  const params = useParams();
+  const storeName = Array.isArray(params.storeName)
+    ? params.storeName[0]
+    : params.storeName || "";
   const [storeId, setStoreId] = useState<string>(
     getStoreIdFromLocalStorage() || ""
   );
@@ -81,6 +87,9 @@ const ShowAllCategories = () => {
                   <Button
                     variant="outline"
                     className="w-full mt-4 border-black"
+                    onClick={() => {
+                      router.push(`/${storeName}/category/${data?.categoryId}`);
+                    }}
                   >
                     Show details
                   </Button>

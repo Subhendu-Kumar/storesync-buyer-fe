@@ -2,21 +2,27 @@
 
 import {
   Card,
+  CardTitle,
+  CardHeader,
   CardContent,
   CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { getStoreIdFromLocalStorage } from "@/lib/utils";
 import { getProducts } from "@/api";
-import CategoryCardSkeleton from "./skeleton_loaders/CategoryCardSkeleton";
-import { ProductResponse } from "@/types";
-import { CLOUDINARY_BASE_URL, CLOUDINARY_KEY } from "@/config";
 import { Button } from "./ui/button";
+import { ProductResponse } from "@/types";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { getStoreIdFromLocalStorage } from "@/lib/utils";
+import { CLOUDINARY_BASE_URL, CLOUDINARY_KEY } from "@/config";
+import CategoryCardSkeleton from "./skeleton_loaders/CategoryCardSkeleton";
 
 const ShowTopProducts = () => {
+  const router = useRouter();
+  const params = useParams();
+  const storeName = Array.isArray(params.storeName)
+    ? params.storeName[0]
+    : params.storeName || "";
   const [storeId, setStoreId] = useState<string>(
     getStoreIdFromLocalStorage() || ""
   );
@@ -108,6 +114,9 @@ const ShowTopProducts = () => {
                     <Button
                       variant="outline"
                       className="w-full mt-4 border-black"
+                      onClick={() => {
+                        router.push(`/${storeName}/product/${data?.id}`);
+                      }}
                     >
                       Show details
                     </Button>

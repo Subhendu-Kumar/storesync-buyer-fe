@@ -31,3 +31,46 @@ export const getProducts = async (store_id: string) => {
     console.log("error ", error);
   }
 };
+
+export const getProductByCategoryId = async (
+  store_id: string,
+  category_id: string
+) => {
+  try {
+    const response = await API.get(
+      `/stores/public/${store_id}/categories/${category_id}/products`
+    );
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};
+
+export const getCategoryByCategoryId = async (
+  store_id: string,
+  category_id: string
+) => {
+  console.log(store_id, category_id);
+  try {
+    const response = await API.get(
+      `/stores/public/${store_id}/categories/${category_id}`
+    );
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};
+
+export const getProductByProductId = async (
+  store_id: string,
+  product_id: string
+) => {
+  try {
+    const response = await API.get(
+      `/stores/public/${store_id}/products/${product_id}`
+    );
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};

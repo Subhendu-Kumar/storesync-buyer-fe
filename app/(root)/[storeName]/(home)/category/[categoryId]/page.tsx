@@ -1,5 +1,6 @@
 "use client";
 
+import ShowCategoryDetails from "@/components/ShowCategoryDetails";
 import { useParams } from "next/navigation";
 
 const CategoryDetails = () => {
@@ -14,6 +15,7 @@ const CategoryDetails = () => {
       <h1 className="text-center text-2xl font-sans font-semibold">
         Category Details
       </h1>
+      <ShowCategoryDetails categoryId={categoryId} />
     </div>
   );
 };

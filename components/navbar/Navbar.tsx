@@ -1,10 +1,13 @@
-import Link from "next/link";
 import React from "react";
-import { FaCartPlus, FaStore } from "react-icons/fa";
-import { Button } from "../ui/button";
+import Link from "next/link";
 import { navitems } from "@/data";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
+import { FaCartPlus, FaStore } from "react-icons/fa";
 
 const Navbar = ({ storeName }: { storeName: string }) => {
+  const router = useRouter();
+
   return (
     <nav className="w-full h-[4.5rem] bg-white border-b border-gray-500 flex items-center justify-between px-20 fixed z-10 top-0 left-0">
       <Link
@@ -30,9 +33,14 @@ const Navbar = ({ storeName }: { storeName: string }) => {
         })}
       </div>
       <div className="flex items-center justify-center gap-6">
-        <div className="p-2 rounded-full bg-gray-200">
+        <button
+          className="p-2 rounded-full bg-gray-200"
+          onClick={() => {
+            router.push(`/${storeName}/cart`);
+          }}
+        >
           <FaCartPlus className="text-2xl" />
-        </div>
+        </button>
         <Button className="text-lg font-medium">Sign In</Button>
       </div>
     </nav>
