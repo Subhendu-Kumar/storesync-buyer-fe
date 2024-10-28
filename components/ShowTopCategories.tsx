@@ -15,8 +15,15 @@ import { getStoreIdFromLocalStorage } from "@/lib/utils";
 import { getCategories } from "@/api";
 import { CategoryResponse } from "@/types";
 import CategoryCardSkeleton from "./skeleton_loaders/CategoryCardSkeleton";
+import { Button } from "./ui/button";
+import { useParams, useRouter } from "next/navigation";
 
 const ShowTopCategories = () => {
+  const params = useParams();
+  const storeName = Array.isArray(params.storeName)
+    ? params.storeName[0]
+    : params.storeName || "";
+  const router = useRouter();
   const [storeId, setStoreId] = useState<string>(
     getStoreIdFromLocalStorage() || ""
   );
@@ -72,8 +79,21 @@ const ShowTopCategories = () => {
                     />
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <CardDescription>{data?.description}</CardDescription>
+                <CardFooter className="w-full h-auto flex flex-col items-start justify-start">
+                  <CardDescription>
+                    {data?.description?.length > 100
+                      ? `${data.description.slice(0, 100)}...`
+                      : data.description}
+                  </CardDescription>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      router.push(`/${storeName}/category/${data?.categoryId}`);
+                    }}
+                    className="w-full mt-4 border-black"
+                  >
+                    Show details
+                  </Button>
                 </CardFooter>
               </Card>
             );

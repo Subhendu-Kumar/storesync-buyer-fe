@@ -22,3 +22,12 @@ export const getCategories = async (store_id: string) => {
     console.log("error ", error);
   }
 };
+
+export const getProducts = async (store_id: string) => {
+  try {
+    const response = await API.get(`/stores/public/${store_id}/products`);
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};

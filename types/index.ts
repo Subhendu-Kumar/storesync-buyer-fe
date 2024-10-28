@@ -18,3 +18,25 @@ interface Category {
 }
 
 export type CategoryResponse = Category[];
+
+interface Inventory {
+  warehouseName: string;
+  quantity: number;
+}
+
+interface Product {
+  id: string;
+  productName: string;
+  categoryName: string;
+  productDesc: string;
+  actualPrice: number;
+  discountedPrice: number;
+  weight: number;
+  hsnCode: string;
+  storeName: string;
+  photoPublicId: [string];
+  inventory: Inventory[];
+  active: boolean;
+}
+
+export type ProductResponse = Product[];

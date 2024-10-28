@@ -15,6 +15,7 @@ import { getStoreIdFromLocalStorage } from "@/lib/utils";
 import { getCategories } from "@/api";
 import { CategoryResponse } from "@/types";
 import CategoryCardSkeleton from "./skeleton_loaders/CategoryCardSkeleton";
+import { Button } from "./ui/button";
 
 const ShowAllCategories = () => {
   const [storeId, setStoreId] = useState<string>(
@@ -71,8 +72,18 @@ const ShowAllCategories = () => {
                     />
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <CardDescription>{data?.description}</CardDescription>
+                <CardFooter className="w-full h-auto flex flex-col items-start justify-start">
+                  <CardDescription>
+                    {data?.description?.length > 100
+                      ? `${data.description.slice(0, 100)}...`
+                      : data.description}
+                  </CardDescription>
+                  <Button
+                    variant="outline"
+                    className="w-full mt-4 border-black"
+                  >
+                    Show details
+                  </Button>
                 </CardFooter>
               </Card>
             );

@@ -1,3 +1,4 @@
+import ShowAllProducts from "@/components/ShowAllProducts";
 import React from "react";
 
 const AllProducts = () => {
@@ -6,6 +7,7 @@ const AllProducts = () => {
       <h1 className="text-center text-2xl font-sans font-semibold">
         All Products
       </h1>
+      <ShowAllProducts />
     </div>
   );
 };
