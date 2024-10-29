@@ -56,7 +56,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
     <main className="w-full min-h-screen relative">
       <Navbar
         storeName={
-          storeDetails?.name.split(" ").join("").toLocaleLowerCase() ||
+          storeDetails?.storeLink.split(" ").join("").toLocaleLowerCase() ||
           "default"
         }
       />
