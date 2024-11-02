@@ -19,12 +19,12 @@ export interface Category {
 
 export type CategoryResponse = Category[];
 
-interface Inventory {
+export interface Inventory {
   warehouseName: string;
   quantity: number;
 }
 
-interface Product {
+export interface Product {
   id: string;
   productName: string;
   categoryName: string;

@@ -7,7 +7,7 @@ import Footer from "@/components/footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import ErrorScreen from "@/components/ErrorScreen";
 import { ReactNode, useEffect, useState } from "react";
-import FullScreenLoader from "@/components/FullScreenLoader";
+import FullScreenLoader from "@/components/skeleton_loaders/FullScreenLoader";
 import { saveStoreIdToLocalStorage } from "@/lib/utils";
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
