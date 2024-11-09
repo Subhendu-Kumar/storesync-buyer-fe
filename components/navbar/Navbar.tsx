@@ -41,7 +41,14 @@ const Navbar = ({ storeName }: { storeName: string }) => {
         >
           <FaCartPlus className="text-2xl" />
         </button>
-        <Button className="text-lg font-medium">Sign In</Button>
+        <Button
+          className="text-lg font-medium"
+          onClick={() => {
+            router.push(`/${storeName}/signup`);
+          }}
+        >
+          Sign In
+        </Button>
       </div>
     </nav>
   );

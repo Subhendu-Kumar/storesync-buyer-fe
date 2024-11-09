@@ -40,3 +40,9 @@ export interface Product {
 }
 
 export type ProductResponse = Product[];
+
+export interface FromData {
+  name?: string;
+  email: string;
+  password: string;
+}
