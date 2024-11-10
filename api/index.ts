@@ -97,3 +97,19 @@ export const getProductByProductId = async (
     console.log("error ", error);
   }
 };
+
+/*---------- cart services ----------*/
+export const addToCart = async (
+  user_id: string,
+  data: {
+    storeId: string;
+    productId: string;
+  }
+) => {
+  try {
+    const response = await API.post(`/users/${user_id}/cart`, data);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};

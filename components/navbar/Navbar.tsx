@@ -46,30 +46,30 @@ const Navbar = ({ storeName }: { storeName: string }) => {
           );
         })}
       </div>
-      <div className="flex items-center justify-center gap-6">
+      <div className="flex items-center justify-center gap-4">
         <button
-          className="p-2 rounded-full bg-gray-200"
+          className="p-2.5 rounded-full border border-gray-400"
           onClick={() => {
             router.push(`/${storeName}/cart`);
           }}
         >
-          <FaCartPlus className="text-2xl" />
+          <FaCartPlus className="text-xl" />
         </button>
         {isAuthenticated ? (
           <>
             <Button
-              className="text-black text-lg font-medium"
+              className="text-black text-sm font-medium border-gray-400"
               variant="outline"
             >
-              {buyerDetails?.name}
+              {buyerDetails?.name.split(" ")[0]}
             </Button>
-            <Button className="text-lg font-medium" onClick={logout}>
-              Logout
+            <Button className="text-sm font-medium" onClick={logout}>
+              Sign Out
             </Button>
           </>
         ) : (
           <Button
-            className="text-lg font-medium"
+            className="text-sm font-medium"
             onClick={() => {
               router.push(`/${storeName}/signin`);
             }}
