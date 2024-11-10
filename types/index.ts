@@ -53,3 +53,15 @@ export interface FromData {
   email: string;
   password: string;
 }
+
+export interface Offer {
+  id: string;
+  offerType: string;
+  offerName: string;
+  offerCode: string;
+  active: boolean;
+  percentageValue: number;
+  flatAmountValue: number;
+  minimumPurchaseAmount: number;
+  maximumDiscountAmount: number;
+}

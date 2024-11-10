@@ -113,3 +113,13 @@ export const addToCart = async (
     console.log(error);
   }
 };
+
+/*---------- offer services ----------*/
+export const getOffers = async (store_id: string) => {
+  try {
+    const response = await API.get(`/stores/public/${store_id}/offers`);
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};

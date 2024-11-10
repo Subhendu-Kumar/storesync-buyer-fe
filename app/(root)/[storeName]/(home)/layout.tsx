@@ -6,9 +6,10 @@ import { useParams } from "next/navigation";
 import Footer from "@/components/footer/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import ErrorScreen from "@/components/ErrorScreen";
+import OfferSidebar from "@/components/OfferSidebar";
 import { ReactNode, useEffect, useState } from "react";
-import FullScreenLoader from "@/components/skeleton_loaders/FullScreenLoader";
 import { saveStoreIdToLocalStorage } from "@/lib/utils";
+import FullScreenLoader from "@/components/skeleton_loaders/FullScreenLoader";
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
   const params = useParams();
@@ -60,6 +61,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
           "default"
         }
       />
+      <OfferSidebar />
       <div className="w-full h-auto mt-[4.5rem]">
         {children}
         <Footer storeDetails={storeDetails!} />
