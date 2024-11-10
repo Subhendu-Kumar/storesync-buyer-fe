@@ -1,3 +1,10 @@
+export interface AuthContextProps {
+  isAuthenticated: boolean;
+  loading: boolean;
+  login: (token: string) => void;
+  logout: () => void;
+}
+
 export interface StoreDetails {
   id: string;
   name: string;

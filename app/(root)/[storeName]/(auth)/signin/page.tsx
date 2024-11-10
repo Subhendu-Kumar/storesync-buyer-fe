@@ -16,11 +16,14 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { setBuyerDetails } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 import { signInSchema } from "@/lib/validations";
 
 const SignIn = ({ params }: { params: Promise<{ storeName: string }> }) => {
   const { storeName } = use(params);
+  const { login } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [formData, setFormData] = useState<FromData>({
@@ -50,6 +53,8 @@ const SignIn = ({ params }: { params: Promise<{ storeName: string }> }) => {
       try {
         const res = await signIn(formData);
         if (res?.status === 200) {
+          setBuyerDetails(res?.data?.buyer_name, res?.data?.buyer_id);
+          login(res?.data?.token);
           toast({
             title: "Success",
             description: "Logged in successfully",

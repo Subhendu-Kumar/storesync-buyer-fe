@@ -1,12 +1,26 @@
-import React from "react";
+"use client";
+
 import Link from "next/link";
 import { navitems } from "@/data";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getBuyerDetails } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 import { FaCartPlus, FaStore } from "react-icons/fa";
 
 const Navbar = ({ storeName }: { storeName: string }) => {
   const router = useRouter();
+  const { logout, isAuthenticated } = useAuth();
+  const [buyerDetails, setBuyerDetails] = useState<{
+    name: string;
+    id: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const buyerDetails = getBuyerDetails();
+    setBuyerDetails(buyerDetails);
+  }, [logout, isAuthenticated]);
 
   return (
     <nav className="w-full h-[4.5rem] bg-white border-b border-gray-500 flex items-center justify-between px-20 fixed z-10 top-0 left-0">
@@ -41,14 +55,28 @@ const Navbar = ({ storeName }: { storeName: string }) => {
         >
           <FaCartPlus className="text-2xl" />
         </button>
-        <Button
-          className="text-lg font-medium"
-          onClick={() => {
-            router.push(`/${storeName}/signup`);
-          }}
-        >
-          Sign In
-        </Button>
+        {isAuthenticated ? (
+          <>
+            <Button
+              className="text-black text-lg font-medium"
+              variant="outline"
+            >
+              {buyerDetails?.name}
+            </Button>
+            <Button className="text-lg font-medium" onClick={logout}>
+              Logout
+            </Button>
+          </>
+        ) : (
+          <Button
+            className="text-lg font-medium"
+            onClick={() => {
+              router.push(`/${storeName}/signin`);
+            }}
+          >
+            Sign In
+          </Button>
+        )}
       </div>
     </nav>
   );
