@@ -1,4 +1,3 @@
-import { FaUser } from "react-icons/fa";
 import { BsFillHddStackFill } from "react-icons/bs";
 import { FaMapLocationDot } from "react-icons/fa6";
 
@@ -19,18 +18,13 @@ export const navitems = [
 
 export const profileNavItems = [
   {
-    name: "my profile",
-    path: "profile",
-    icon: FaUser,
-  },
-  {
     name: "my orders",
     path: "profile/orders",
     icon: BsFillHddStackFill,
   },
   {
     name: "my addresses",
-    path: "profile/address",
+    path: "profile/addresses",
     icon: FaMapLocationDot,
   },
 ];

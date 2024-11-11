@@ -1,9 +1,19 @@
 import axios from "axios";
 import { BASE_URL } from "@/config";
 import { FromData } from "@/types";
+import { getToken } from "@/lib/utils";
+import { AddressFormValues } from "@/lib/validations";
 
 const API = axios.create({
   baseURL: BASE_URL,
+});
+
+API.interceptors.request.use((req) => {
+  const token = getToken();
+  if (token) {
+    req.headers.Authorization = `Bearer ${token}`;
+  }
+  return req;
 });
 
 /*---------- store services ----------*/
@@ -118,6 +128,36 @@ export const addToCart = async (
 export const getOffers = async (store_id: string) => {
   try {
     const response = await API.get(`/stores/public/${store_id}/offers`);
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};
+
+/*---------- address services ----------*/
+export const getAddresses = async (user_id: string) => {
+  try {
+    const response = await API.get(`/users/${user_id}/address`);
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};
+
+export const addAddress = async (user_id: string, data: AddressFormValues) => {
+  try {
+    const response = await API.put(`/users/${user_id}/address`, data);
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};
+
+export const deleteAddress = async (user_id: string, address_id: string) => {
+  try {
+    const response = await API.delete(
+      `/users/${user_id}/address/${address_id}`
+    );
     return response;
   } catch (error) {
     console.log("error ", error);

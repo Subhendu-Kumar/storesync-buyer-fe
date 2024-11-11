@@ -57,12 +57,14 @@ const Navbar = ({ storeName }: { storeName: string }) => {
         </button>
         {isAuthenticated ? (
           <>
-            <Button
-              className="text-black text-sm font-medium border-gray-400"
-              variant="outline"
-            >
-              {buyerDetails?.name.split(" ")[0]}
-            </Button>
+            <Link href={`/${storeName}/profile`}>
+              <Button
+                className="text-black text-sm font-medium border-gray-400"
+                variant="outline"
+              >
+                {buyerDetails?.name.split(" ")[0]}
+              </Button>
+            </Link>
             <Button className="text-sm font-medium" onClick={logout}>
               Sign Out
             </Button>

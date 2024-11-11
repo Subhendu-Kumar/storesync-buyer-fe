@@ -65,3 +65,16 @@ export interface Offer {
   minimumPurchaseAmount: number;
   maximumDiscountAmount: number;
 }
+
+export interface Address {
+  id: number;
+  name: string;
+  mobileNo: number;
+  email: string;
+  address: string;
+  area: string;
+  landmark: string;
+  pinCode: number;
+  city: string;
+  state: string;
+}
