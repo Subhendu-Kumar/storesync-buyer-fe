@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import ShowCartItems from "./ShowCartItems";
 import { Cart } from "@/types";
 import { getBuyerDetails, getStoreIdFromLocalStorage } from "@/lib/utils";
-import { applyOffer, getCart } from "@/api";
+import { applyAddressToCart, applyOffer, getCart, removeOffer } from "@/api";
 import CartSidebar from "./CartSidebar";
 import CartOfferHandler from "./CartOfferHandler";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +22,9 @@ const CartHandler = () => {
   } | null>(getBuyerDetails());
   const [cart, setCart] = useState<Cart | undefined>(undefined);
   const [fetchingCartData, setFetchingCartData] = useState<boolean>(false);
+  const [applyingOffer, setApplyingOffer] = useState<boolean>(false);
+  const [applyingAddress, setApplyingAddress] = useState<boolean>(false);
+  const [removingOffer, setRemovingOffer] = useState<boolean>(false);
 
   useEffect(() => {
     setStoreId(getStoreIdFromLocalStorage() || "");
@@ -71,6 +74,7 @@ const CartHandler = () => {
   };
 
   const handleApplyOffer = async (offer_id: string) => {
+    setApplyingOffer(true);
     if (!buyerDetails?.id) {
       toast({
         title: "Error",
@@ -97,10 +101,6 @@ const CartHandler = () => {
       console.log("res ", res);
       if (res?.status === 202) {
         setCart(res?.data);
-        toast({
-          title: "Success",
-          description: "Offer applied successfully",
-        });
       } else {
         toast({
           title: "Error",
@@ -113,6 +113,95 @@ const CartHandler = () => {
         title: "Error",
         description: "Failed to apply offer",
       });
+    } finally {
+      setApplyingOffer(false);
+    }
+  };
+
+  const handleRemoveOffer = async () => {
+    setRemovingOffer(true);
+    if (!buyerDetails?.id) {
+      toast({
+        title: "Error",
+        description: "Please login to apply offer",
+      });
+      return;
+    }
+    if (!storeId) {
+      toast({
+        title: "Error",
+        description: "Please select store to apply offer",
+      });
+      return;
+    }
+    try {
+      const res = await removeOffer(buyerDetails?.id, storeId);
+      console.log("res ", res);
+      if (res?.status === 200) {
+        setCart(res?.data);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to remove offer",
+        });
+      }
+    } catch (error) {
+      console.log("error ", error);
+      toast({
+        title: "Error",
+        description: "Failed to remove offer",
+      });
+    } finally {
+      setRemovingOffer(false);
+    }
+  };
+
+  const handleApplyAddress = async (address_id: number) => {
+    setApplyingAddress(true);
+    if (!buyerDetails?.id) {
+      toast({
+        title: "Error",
+        description: "Please login to apply offer",
+      });
+      return;
+    }
+    if (!storeId) {
+      toast({
+        title: "Error",
+        description: "Please select store to apply offer",
+      });
+      return;
+    }
+    if (!address_id) {
+      toast({
+        title: "Error",
+        description: "Please select offer to apply",
+      });
+      return;
+    }
+    try {
+      const res = await applyAddressToCart(
+        buyerDetails?.id,
+        storeId,
+        address_id
+      );
+      console.log(res);
+      if (res?.status === 202) {
+        setCart(res?.data);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to apply address",
+        });
+      }
+    } catch (error) {
+      console.log("error ", error);
+      toast({
+        title: "Error",
+        description: "Failed to apply address",
+      });
+    } finally {
+      setApplyingAddress(false);
     }
   };
 
@@ -162,9 +251,21 @@ const CartHandler = () => {
               <ShowCartItems cart={cart!} fetchingCartData={fetchingCartData} />
             )}
             {currentStep === 2 && (
-              <CartOfferHandler handleApplyOffer={handleApplyOffer} />
+              <CartOfferHandler
+                cart={cart!}
+                handleApplyOffer={handleApplyOffer}
+                applyingOffer={applyingOffer}
+                handleRemoveOffer={handleRemoveOffer}
+                removingOffer={removingOffer}
+              />
             )}
-            {currentStep === 3 && <CartAddressHandler />}
+            {currentStep === 3 && (
+              <CartAddressHandler
+                cart={cart!}
+                handleApplyAddress={handleApplyAddress}
+                applyingAddress={applyingAddress}
+              />
+            )}
           </div>
           <CartSidebar
             cart={cart!}

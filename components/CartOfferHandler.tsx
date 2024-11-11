@@ -3,15 +3,23 @@
 import { getOffers } from "@/api";
 import { useToast } from "@/hooks/use-toast";
 import { getStoreIdFromLocalStorage } from "@/lib/utils";
-import { Offer } from "@/types";
+import { Cart, Offer } from "@/types";
 import React, { useEffect, useState } from "react";
 import { BiSolidOffer } from "react-icons/bi";
 import { FaCircleNotch } from "react-icons/fa6";
 
 const CartOfferHandler = ({
+  cart,
   handleApplyOffer,
+  applyingOffer,
+  handleRemoveOffer,
+  removingOffer,
 }: {
+  cart: Cart;
   handleApplyOffer: (offer_id: string) => void;
+  applyingOffer: boolean;
+  handleRemoveOffer: () => void;
+  removingOffer: boolean;
 }) => {
   const { toast } = useToast();
   const [storeId, setStoreId] = useState<string>(
@@ -27,10 +35,6 @@ const CartOfferHandler = ({
         const res = await getOffers(storeId);
         if (res?.status === 200) {
           setOffers(res?.data);
-          toast({
-            title: "Success",
-            description: "Offers fetched successfully",
-          });
         } else {
           toast({
             title: "Error",
@@ -58,6 +62,14 @@ const CartOfferHandler = ({
       <h1 className="text-2xl font-sans font-semibold">
         Apply Coupons and offers
       </h1>
+      {cart?.appliedOfferId && !loading && (
+        <div className="w-full h-auto mt-5 rounded-md py-2 bg-green-100 text-green-500 border border-green-500 flex items-center justify-center">
+          <p className="text-base font-sans font-semibold">
+            &quot;{cart?.appliedOfferId?.offerCode.toUpperCase()}&quot; Applied
+            You got discount of &#8377;{cart?.appliedOfferId?.flatAmountValue}
+          </p>
+        </div>
+      )}
       {loading ? (
         <div className="w-full h-96 flex items-center justify-center mt-6">
           <FaCircleNotch className="animate-spin text-7xl text-gray-400" />
@@ -81,12 +93,29 @@ const CartOfferHandler = ({
                     <BiSolidOffer className="text-3xl text-orange-500" />
                     <p className="font-semibold">{data?.offerCode}</p>
                   </h1>
-                  <button
-                    className="text-lg text-black p-2 rounded-full hover:bg-gray-200 font-serif"
-                    onClick={() => handleApplyOffer(data?.id)}
-                  >
-                    Apply
-                  </button>
+                  {cart?.appliedOfferId?.id === data?.id ? (
+                    <button
+                      className="text-base text-red-500 p-2 rounded-full hover:bg-gray-200 font-serif"
+                      onClick={handleRemoveOffer}
+                    >
+                      {removingOffer ? (
+                        <FaCircleNotch className="animate-spin text-base text-red-500" />
+                      ) : (
+                        "Remove"
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      className="text-base text-black p-2 rounded-full hover:bg-gray-200 font-serif"
+                      onClick={() => handleApplyOffer(data?.id)}
+                    >
+                      {applyingOffer ? (
+                        <FaCircleNotch className="animate-spin text-base text-black" />
+                      ) : (
+                        "Apply"
+                      )}
+                    </button>
+                  )}
                 </div>
                 <p className="w-full h-auto text-sm font-sans font-medium">
                   {data?.offerType === "PERCENTAGE_DISCOUNT" && (

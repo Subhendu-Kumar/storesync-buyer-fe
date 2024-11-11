@@ -155,7 +155,7 @@ export const applyOffer = async (
 ) => {
   try {
     const response = await API.post(
-      `/users/${user_id}/apply-offer?storeId=${store_id}&offerId=${offer_id}&buyNow=false`
+      `/users/${user_id}/cart/apply-offer?storeId=${store_id}&offerId=${offer_id}&buyNow=false`
     );
     return response;
   } catch (error) {
@@ -166,7 +166,7 @@ export const applyOffer = async (
 export const removeOffer = async (user_id: string, store_id: string) => {
   try {
     const response = await API.post(
-      `/users/${user_id}/remove-offer?storeId=${store_id}`
+      `/users/${user_id}/cart/remove-offer?storeId=${store_id}&buyNow=false`
     );
     return response;
   } catch (error) {
@@ -197,6 +197,21 @@ export const deleteAddress = async (user_id: string, address_id: string) => {
   try {
     const response = await API.delete(
       `/users/${user_id}/address/${address_id}`
+    );
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};
+
+export const applyAddressToCart = async (
+  user_id: string,
+  store_id: string,
+  address_id: number
+) => {
+  try {
+    const response = await API.patch(
+      `/users/${user_id}/cart?storeId=${store_id}&addressId=${address_id}&buyNow=false`
     );
     return response;
   } catch (error) {
