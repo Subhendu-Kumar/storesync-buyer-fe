@@ -11,14 +11,21 @@ import { Skeleton } from "./ui/skeleton";
 import { useEffect, useState } from "react";
 import { Category, ProductResponse } from "@/types";
 import { useParams, useRouter } from "next/navigation";
-import { getStoreIdFromLocalStorage } from "@/lib/utils";
+import { getBuyerDetails, getStoreIdFromLocalStorage } from "@/lib/utils";
 import { CLOUDINARY_BASE_URL, CLOUDINARY_KEY } from "@/config";
-import { getCategoryByCategoryId, getProductByCategoryId } from "@/api";
+import {
+  addToCart,
+  getCategoryByCategoryId,
+  getProductByCategoryId,
+} from "@/api";
 import CategoryCardSkeleton from "./skeleton_loaders/CategoryCardSkeleton";
+import { useToast } from "@/hooks/use-toast";
+import { FaCircleNotch } from "react-icons/fa6";
 
 const ShowCategoryDetails = ({ categoryId }: { categoryId: string }) => {
   const router = useRouter();
   const params = useParams();
+  const { toast } = useToast();
   const storeName = Array.isArray(params.storeName)
     ? params.storeName[0]
     : params.storeName || "";
@@ -26,18 +33,30 @@ const ShowCategoryDetails = ({ categoryId }: { categoryId: string }) => {
     getStoreIdFromLocalStorage() || ""
   );
   const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState(false);
   const [fetching, setFetching] = useState<boolean>(false);
   const [category_id, setCategory_id] = useState<string>("");
   const [products, setProducts] = useState<ProductResponse>([]);
   const [category, setCategory] = useState<Category>({} as Category);
   const [categoryFetchComplete, setCategoryFetchComplete] =
     useState<boolean>(false);
+  const [productIdToAddToCart, setProductIdToAddToCart] = useState<string>("");
+  const [buyerDetails, setBuyerDetails] = useState<{
+    name: string;
+    id: string;
+  } | null>(getBuyerDetails());
 
   useEffect(() => {
     if (category) {
       setCategory_id(category?.categoryId || "");
     }
   }, [category]);
+
+  useEffect(() => {
+    const buyerDetails = getBuyerDetails();
+    setBuyerDetails(buyerDetails);
+  }, []);
 
   useEffect(() => {
     const fetchproducts = async () => {
@@ -83,6 +102,40 @@ const ShowCategoryDetails = ({ categoryId }: { categoryId: string }) => {
       fetchCategory();
     }
   }, [storeId, categoryId]);
+
+  const handleAddToCart = async () => {
+    const cartData = {
+      storeId,
+      productId: productIdToAddToCart,
+    };
+    console.log(cartData);
+    setIsLoading(true);
+    try {
+      const res = await addToCart(buyerDetails?.id || "", cartData);
+      console.log(res);
+      if (res?.status === 200) {
+        toast({
+          title: "Success",
+          description: "Product added to cart successfully",
+        });
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        toast({
+          title: "Error: Something went wrong",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.log("error adding to cart: ", error);
+      toast({
+        title: "Error: Something went wrong",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="w-full h-auto py-10">
@@ -168,8 +221,18 @@ const ShowCategoryDetails = ({ categoryId }: { categoryId: string }) => {
                             <Button
                               variant="outline"
                               className="w-[50%] border-black"
+                              onClick={() => {
+                                setProductIdToAddToCart(data?.id);
+                                handleAddToCart();
+                              }}
                             >
-                              Add to cart
+                              {isLoading ? (
+                                <FaCircleNotch className="animate-spin text-xl" />
+                              ) : success ? (
+                                "Added 1 item"
+                              ) : (
+                                "Add to cart"
+                              )}
                             </Button>
                             <Button className="w-[50%]">Buy now</Button>
                           </div>

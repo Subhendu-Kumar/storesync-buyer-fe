@@ -117,10 +117,24 @@ export const addToCart = async (
   }
 ) => {
   try {
-    const response = await API.post(`/users/${user_id}/cart`, data);
+    const response = await API.post(
+      `/users/${user_id}/cart?buyNow=false`,
+      data
+    );
     return response;
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getCart = async (user_id: string, store_id: string) => {
+  try {
+    const respopnse = await API.get(
+      `/users/${user_id}/cart?storeId=${store_id}&buyNow=false`
+    );
+    return respopnse;
+  } catch (error) {
+    console.log("error", error);
   }
 };
 
@@ -128,6 +142,32 @@ export const addToCart = async (
 export const getOffers = async (store_id: string) => {
   try {
     const response = await API.get(`/stores/public/${store_id}/offers`);
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};
+
+export const applyOffer = async (
+  user_id: string,
+  store_id: string,
+  offer_id: string
+) => {
+  try {
+    const response = await API.post(
+      `/users/${user_id}/apply-offer?storeId=${store_id}&offerId=${offer_id}&buyNow=false`
+    );
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};
+
+export const removeOffer = async (user_id: string, store_id: string) => {
+  try {
+    const response = await API.post(
+      `/users/${user_id}/remove-offer?storeId=${store_id}`
+    );
     return response;
   } catch (error) {
     console.log("error ", error);

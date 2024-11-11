@@ -78,3 +78,48 @@ export interface Address {
   city: string;
   state: string;
 }
+
+export interface Cart {
+  cartId: string;
+  items: CartItem[];
+  deliveryCharge: number;
+  subTotal: number;
+  discount: number;
+  total: number;
+  appliedOfferId?: AppliedOffer;
+  deliveryAddress?: DeliveryAddress;
+}
+
+export interface CartItem {
+  productId: string;
+  productName: string;
+  quantity: number;
+  discountedPrice: number;
+  actualPrice: number;
+  productPhoto: string[];
+}
+
+export interface AppliedOffer {
+  id: string;
+  offerType: string;
+  offerName: string;
+  offerCode: string;
+  active: boolean;
+  percentageValue: number;
+  flatAmountValue: number;
+  minimumPurchaseAmount: number;
+  maximumDiscountAmount: number;
+}
+
+export interface DeliveryAddress {
+  id: number;
+  name: string;
+  mobileNo: number;
+  email: string;
+  address: string;
+  area: string;
+  landmark: string;
+  pinCode: number;
+  city: string;
+  state: string;
+}

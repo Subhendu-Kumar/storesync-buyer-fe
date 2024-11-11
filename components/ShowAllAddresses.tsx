@@ -110,6 +110,7 @@ const ShowAllAddresses = () => {
       setIsLoading(true);
       try {
         const res = await addAddress(buyerDetails?.id || "", formValues);
+        console.log(res)
         if (res?.status === 201) {
           toast({
             title: "Success",

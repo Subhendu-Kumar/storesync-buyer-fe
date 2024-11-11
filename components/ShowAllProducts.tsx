@@ -8,26 +8,41 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
-import { getProducts } from "@/api";
+import { addToCart, getProducts } from "@/api";
 import { Button } from "./ui/button";
 import { ProductResponse } from "@/types";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getStoreIdFromLocalStorage } from "@/lib/utils";
+import { getBuyerDetails, getStoreIdFromLocalStorage } from "@/lib/utils";
 import { CLOUDINARY_BASE_URL, CLOUDINARY_KEY } from "@/config";
 import CategoryCardSkeleton from "./skeleton_loaders/CategoryCardSkeleton";
+import { FaCircleNotch } from "react-icons/fa6";
+import { useToast } from "@/hooks/use-toast";
 
 const ShowAllProducts = () => {
   const router = useRouter();
   const params = useParams();
+  const { toast } = useToast();
   const storeName = Array.isArray(params.storeName)
     ? params.storeName[0]
     : params.storeName || "";
   const [storeId, setStoreId] = useState<string>(
     getStoreIdFromLocalStorage() || ""
   );
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState<boolean>(false);
   const [products, setProducts] = useState<ProductResponse>([]);
+  const [productIdToAddToCart, setProductIdToAddToCart] = useState<string>("");
+  const [buyerDetails, setBuyerDetails] = useState<{
+    name: string;
+    id: string;
+  } | null>(getBuyerDetails());
+
+  useEffect(() => {
+    const buyerDetails = getBuyerDetails();
+    setBuyerDetails(buyerDetails);
+  }, []);
 
   useEffect(() => {
     const fetchproducts = async () => {
@@ -48,6 +63,63 @@ const ShowAllProducts = () => {
       fetchproducts();
     }
   }, [storeId]);
+
+  const handleAddToCart = async () => {
+    if (!storeId) {
+      toast({
+        title: "Error",
+        description: "Store Id is undefined",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!buyerDetails?.id) {
+      toast({
+        title: "Error",
+        description: "User Id is undefined",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!productIdToAddToCart) {
+      toast({
+        title: "Error",
+        description: "Product Id is undefined",
+        variant: "destructive",
+      });
+      return;
+    }
+    const cartData = {
+      storeId,
+      productId: productIdToAddToCart,
+    };
+    setLoading(true);
+    try {
+      const res = await addToCart(buyerDetails?.id || "", cartData);
+      console.log(res);
+      if (res?.status === 200) {
+        toast({
+          title: "Success",
+          description: "Product added to cart successfully",
+        });
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        toast({
+          title: "Error: Something went wrong",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.log("error adding to cart: ", error);
+      toast({
+        title: "Error: Something went wrong",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full h-auto grid grid-cols-3 gap-4 mt-6">
@@ -105,8 +177,18 @@ const ShowAllProducts = () => {
                       <Button
                         variant="outline"
                         className="w-[50%] border-black"
+                        onClick={() => {
+                          setProductIdToAddToCart(data?.id);
+                          handleAddToCart();
+                        }}
                       >
-                        Add to cart
+                        {loading ? (
+                          <FaCircleNotch className="animate-spin text-xl" />
+                        ) : success ? (
+                          "Added 1 item"
+                        ) : (
+                          "Add to cart"
+                        )}
                       </Button>
                       <Button className="w-[50%]">Buy now</Button>
                     </div>
