@@ -15,7 +15,6 @@ const ShowCartItems = ({
   setProductId,
   handleAddToCart,
   fetchingCartData,
-  removeCompletely,
   setRemoveCompletely,
   handleRemoveFromCart,
   incrementingCartItemQuantity,
@@ -28,7 +27,6 @@ const ShowCartItems = ({
   setProductId: (productId: string) => void;
   handleAddToCart: () => void;
   fetchingCartData: boolean;
-  removeCompletely: boolean;
   setRemoveCompletely: (removeCompletely: boolean) => void;
   handleRemoveFromCart: () => void;
   incrementingCartItemQuantity: boolean;

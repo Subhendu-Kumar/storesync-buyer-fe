@@ -405,7 +405,6 @@ const CartHandler = () => {
                 setProductId={setProductId}
                 handleAddToCart={handleAddToCart}
                 fetchingCartData={fetchingCartData}
-                removeCompletely={removeCompletely}
                 setRemoveCompletely={setRemoveCompletely}
                 handleRemoveFromCart={handleRemoveFromCart}
                 incrementingCartItemQuantity={incrementingCartItemQuantity}
