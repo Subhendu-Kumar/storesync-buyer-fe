@@ -226,9 +226,11 @@ const ShowCategoryDetails = ({ categoryId }: { categoryId: string }) => {
                                 handleAddToCart();
                               }}
                             >
-                              {isLoading ? (
+                              {productIdToAddToCart === data?.id &&
+                              isLoading ? (
                                 <FaCircleNotch className="animate-spin text-xl" />
-                              ) : success ? (
+                              ) : productIdToAddToCart === data?.id &&
+                                success ? (
                                 "Added 1 item"
                               ) : (
                                 "Add to cart"

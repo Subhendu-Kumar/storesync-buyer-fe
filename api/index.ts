@@ -127,6 +127,25 @@ export const addToCart = async (
   }
 };
 
+export const deleteFromCart = async (
+  user_id: string,
+  data: {
+    storeId: string;
+    productId: string;
+  },
+  removeCompletely: boolean
+) => {
+  try {
+    const response = await API.delete(
+      `/users/${user_id}/cart?removeCompletely=${removeCompletely}`,
+      { data }
+    );
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};
+
 export const getCart = async (user_id: string, store_id: string) => {
   try {
     const respopnse = await API.get(

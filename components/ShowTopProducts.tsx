@@ -159,9 +159,9 @@ const ShowTopProducts = () => {
                           handleAddToCart();
                         }}
                       >
-                        {loading ? (
+                        {productIdToAddToCart === data?.id && loading ? (
                           <FaCircleNotch className="animate-spin text-xl" />
-                        ) : success ? (
+                        ) : productIdToAddToCart === data?.id && success ? (
                           "Added 1 item"
                         ) : (
                           "Add to cart"

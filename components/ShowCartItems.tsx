@@ -6,13 +6,35 @@ import React from "react";
 import { FaCircleNotch } from "react-icons/fa6";
 import { FiMinus } from "react-icons/fi";
 import { GoPlus } from "react-icons/go";
+import { MdDeleteForever } from "react-icons/md";
+import { RxCheck } from "react-icons/rx";
 
 const ShowCartItems = ({
   cart,
+  productId,
+  setProductId,
+  handleAddToCart,
   fetchingCartData,
+  removeCompletely,
+  setRemoveCompletely,
+  handleRemoveFromCart,
+  incrementingCartItemQuantity,
+  decrementingCartItemQuantity,
+  incrementingCartItemSuccess,
+  decrementingCartItemSuccess,
 }: {
   cart: Cart;
+  productId: string;
+  setProductId: (productId: string) => void;
+  handleAddToCart: () => void;
   fetchingCartData: boolean;
+  removeCompletely: boolean;
+  setRemoveCompletely: (removeCompletely: boolean) => void;
+  handleRemoveFromCart: () => void;
+  incrementingCartItemQuantity: boolean;
+  decrementingCartItemQuantity: boolean;
+  incrementingCartItemSuccess: boolean;
+  decrementingCartItemSuccess: boolean;
 }) => {
   if (fetchingCartData) {
     return (
@@ -36,7 +58,7 @@ const ShowCartItems = ({
         {cart?.items?.map((item, idx) => {
           return (
             <div
-              className="w-full h-40 border border-gray-300 rounded-lg p-2 flex items-start justify-start gap-4"
+              className="w-full h-40 border border-gray-300 rounded-lg p-2 flex items-start justify-start gap-4 relative"
               key={idx}
             >
               <div className="w-40 h-full rounded-md border border-gray-300 overflow-hidden">
@@ -59,8 +81,8 @@ const ShowCartItems = ({
                     </span>{" "}
                     (
                     {(
-                      (item?.discountedPrice / item?.actualPrice) *
-                      100
+                      100 -
+                      (item?.discountedPrice / item?.actualPrice) * 100
                     ).toFixed(2)}
                     % off)
                   </h2>
@@ -69,17 +91,64 @@ const ShowCartItems = ({
                   </h3>
                 </div>
                 <div className="flex items-center justify-start border border-gray-500 rounded-md overflow-hidden">
-                  <button className="px-4 py-1 flex items-center justify-center text-base">
-                    <FiMinus />
+                  <button
+                    className="px-4 py-1 flex items-center justify-center text-base"
+                    onClick={() => {
+                      setProductId(item?.productId);
+                      setRemoveCompletely(false);
+                      handleRemoveFromCart();
+                    }}
+                  >
+                    {productId === item?.productId &&
+                    decrementingCartItemQuantity ? (
+                      <FaCircleNotch className="animate-spin" />
+                    ) : productId === item?.productId &&
+                      decrementingCartItemSuccess ? (
+                      <RxCheck className="text-green-500" />
+                    ) : (
+                      <FiMinus />
+                    )}
                   </button>
                   <h1 className="px-4 py-1 border-x border-gray-500 text-base">
                     {item?.quantity}
                   </h1>
-                  <button className="px-4 py-1 flex items-center justify-center text-base">
-                    <GoPlus />
+                  <button
+                    className="px-4 py-1 flex items-center justify-center text-base"
+                    onClick={() => {
+                      setProductId(item?.productId);
+                      handleAddToCart();
+                    }}
+                  >
+                    {productId === item?.productId &&
+                    incrementingCartItemQuantity ? (
+                      <FaCircleNotch className="animate-spin" />
+                    ) : productId === item?.productId &&
+                      incrementingCartItemSuccess ? (
+                      <RxCheck className="text-green-500" />
+                    ) : (
+                      <GoPlus />
+                    )}
                   </button>
                 </div>
               </div>
+              <button
+                className="absolute top-2 right-2 p-1 rounded-full text-xl hover:bg-gray-200"
+                onClick={() => {
+                  setProductId(item?.productId);
+                  setRemoveCompletely(true);
+                  handleRemoveFromCart();
+                }}
+              >
+                {productId === item?.productId &&
+                decrementingCartItemQuantity ? (
+                  <FaCircleNotch className="animate-spin" />
+                ) : productId === item?.productId &&
+                  decrementingCartItemSuccess ? (
+                  <RxCheck className="text-green-500" />
+                ) : (
+                  <MdDeleteForever className="text-red-500" />
+                )}
+              </button>
             </div>
           );
         })}

@@ -72,7 +72,7 @@ const CartOfferHandler = ({
       )}
       {loading ? (
         <div className="w-full h-96 flex items-center justify-center mt-6">
-          <FaCircleNotch className="animate-spin text-7xl text-gray-400" />
+          <FaCircleNotch className="animate-spin text-3xl text-gray-400" />
         </div>
       ) : offers.length === 0 ? (
         <div className="w-full h-96 flex items-center justify-center mt-6">
