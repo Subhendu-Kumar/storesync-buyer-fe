@@ -1,26 +1,37 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import ShowCartItems from "./ShowCartItems";
-import { Cart } from "@/types";
-import { getBuyerDetails, getStoreIdFromLocalStorage } from "@/lib/utils";
 import {
-  addToCart,
-  applyAddressToCart,
-  applyOffer,
-  deleteFromCart,
   getCart,
+  addToCart,
+  applyOffer,
   removeOffer,
+  deleteFromCart,
+  applyAddressToCart,
+  placeOrder,
 } from "@/api";
+import Image from "next/image";
+import { steps } from "@/data";
+import { Cart } from "@/types";
 import CartSidebar from "./CartSidebar";
-import CartOfferHandler from "./CartOfferHandler";
+import ShowCartItems from "./ShowCartItems";
 import { useToast } from "@/hooks/use-toast";
-import CartAddressHandler from "./CartAddressHandler";
 import { FaCircleNotch } from "react-icons/fa6";
 import emptyCart from "../public/empty-cart.svg";
-import Image from "next/image";
+import CartOfferHandler from "./CartOfferHandler";
+import React, { use, useEffect, useState } from "react";
+import CartAddressHandler from "./CartAddressHandler";
+import { getBuyerDetails, getStoreIdFromLocalStorage } from "@/lib/utils";
+import CartPlaceOrderHandler from "./CartPlaceOrderHandler";
+import AlertDialogLoader from "./AlertDialogLoader";
+import { useRouter } from "next/navigation";
 
-const CartHandler = () => {
+const CartHandler = ({
+  params,
+}: {
+  params: Promise<{ storeName: string }>;
+}) => {
+  const { storeName } = use(params);
+  const router = useRouter();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [storeId, setStoreId] = useState<string>(
@@ -30,10 +41,9 @@ const CartHandler = () => {
     name: string;
     id: string;
   } | null>(getBuyerDetails());
+  const [productId, setProductId] = useState<string>("");
   const [cart, setCart] = useState<Cart | undefined>(undefined);
-  const [fetchingCartData, setFetchingCartData] = useState<boolean>(false);
   const [applyingOffer, setApplyingOffer] = useState<boolean>(false);
-  const [applyingAddress, setApplyingAddress] = useState<boolean>(false);
   const [removingOffer, setRemovingOffer] = useState<boolean>(false);
   const [incrementingCartItemQuantity, setIncrementingCartItemQuantity] =
     useState<boolean>(false);
@@ -43,8 +53,14 @@ const CartHandler = () => {
     useState<boolean>(false);
   const [decrementingCartItemSuccess, setDecrementingCartItemSuccess] =
     useState<boolean>(false);
-  const [productId, setProductId] = useState<string>("");
+  const [applyingAddress, setApplyingAddress] = useState<boolean>(false);
+  const [fetchingCartData, setFetchingCartData] = useState<boolean>(false);
   const [removeCompletely, setRemoveCompletely] = useState<boolean>(false);
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "ONLINE">("COD");
+  const [fulfillmentType, setFulfillmentType] = useState<"PICKUP" | "DELIVERY">(
+    "DELIVERY"
+  );
+  const [placingOrder, setPlacingOrder] = useState<boolean>(false);
 
   useEffect(() => {
     setStoreId(getStoreIdFromLocalStorage() || "");
@@ -84,8 +100,6 @@ const CartHandler = () => {
       setCurrentStep(4);
     }
   };
-
-  const steps = ["Cart", "Apply offer", "Address", "Payment"];
 
   const handleStepClick = (stepNumber: number) => {
     if (stepNumber <= currentStep) {
@@ -337,6 +351,65 @@ const CartHandler = () => {
     }
   };
 
+  const handlePlaceOrder = async () => {
+    const cart_id = cart?.cartId;
+    const buyer_id = buyerDetails?.id;
+    if (!storeId) {
+      toast({
+        title: "Error",
+        description: "Store Id is undefined",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!buyer_id) {
+      toast({
+        title: "Error",
+        description: "User Id is undefined",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!cart_id) {
+      toast({
+        title: "Error",
+        description: "cart Id is undefined",
+        variant: "destructive",
+      });
+      return;
+    }
+    const cartData = {
+      cartId: cart_id,
+      fulfillmentType: fulfillmentType,
+      paymentMethod: paymentMethod,
+    };
+    setPlacingOrder(true);
+    try {
+      const res = await placeOrder(buyer_id, storeId, cartData);
+      if (res?.status === 201) {
+        toast({
+          title: "Success",
+          description: "Order placed successfully",
+        });
+        router.push(`/${storeName}/profile/orders`);
+      } else {
+        toast({
+          title: "Error: Failed to place order",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Error: Failed to place order",
+        variant: "destructive",
+      });
+    } finally {
+      setPlacingOrder(false);
+      setCurrentStep(1);
+    }
+  };
+
   if (fetchingCartData) {
     return (
       <div className="w-full h-96 flex items-center justify-center">
@@ -345,99 +418,119 @@ const CartHandler = () => {
     );
   }
 
-  if (cart?.items?.length === 0) {
-    return (
-      <div className="w-full h-96 flex flex-col items-center justify-center mt-8 ">
-        <Image src={emptyCart} alt="no orders found" className="w-96 h-auto" />
-        <p className="text-3xl text-gray-400 font-sans font-semibold">
-          No items found
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full h-auto">
-      <div>
-        <div className="flex space-x-4 mt-6 w-full justify-center items-center">
-          {steps.map((step, index) => {
-            const stepNumber = index + 1;
-            return (
-              <div
-                key={step}
-                className="flex items-center"
-                onClick={() => handleStepClick(stepNumber)}
-                style={{
-                  cursor: stepNumber <= currentStep ? "pointer" : "default",
-                }}
-              >
-                <div
-                  className={`h-8 w-8 rounded-full flex items-center justify-center border border-gray-500 ${
-                    currentStep >= stepNumber
-                      ? "bg-black text-white"
-                      : "bg-white text-black"
-                  }`}
-                >
-                  {stepNumber}
-                </div>
-                <span
-                  className={`ml-2 ${
-                    currentStep >= stepNumber
-                      ? "text-brown-500"
-                      : "text-gray-500"
-                  }`}
-                >
-                  {step}
-                </span>
-                {index < steps.length - 1 && (
-                  <hr className="w-10 mx-2 border-black" />
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <div className="w-full h-auto flex items-start justify-center mt-6">
-          <div className="w-[70%] h-auto p-6">
-            {currentStep === 1 && (
-              <ShowCartItems
-                cart={cart!}
-                productId={productId}
-                setProductId={setProductId}
-                handleAddToCart={handleAddToCart}
-                fetchingCartData={fetchingCartData}
-                setRemoveCompletely={setRemoveCompletely}
-                handleRemoveFromCart={handleRemoveFromCart}
-                incrementingCartItemQuantity={incrementingCartItemQuantity}
-                decrementingCartItemQuantity={decrementingCartItemQuantity}
-                incrementingCartItemSuccess={incrementingCartItemSuccess}
-                decrementingCartItemSuccess={decrementingCartItemSuccess}
-              />
-            )}
-            {currentStep === 2 && (
-              <CartOfferHandler
-                cart={cart!}
-                handleApplyOffer={handleApplyOffer}
-                applyingOffer={applyingOffer}
-                handleRemoveOffer={handleRemoveOffer}
-                removingOffer={removingOffer}
-              />
-            )}
-            {currentStep === 3 && (
-              <CartAddressHandler
-                cart={cart!}
-                handleApplyAddress={handleApplyAddress}
-                applyingAddress={applyingAddress}
-              />
-            )}
-          </div>
-          <CartSidebar
-            cart={cart!}
-            currentStep={currentStep}
-            handleContinue={handleContinue}
-            fetchingCartData={fetchingCartData}
+      <AlertDialogLoader
+        open={placingOrder}
+        title="Placing your order"
+        onOpenChange={setPlacingOrder}
+      />
+      {cart === undefined || cart?.items?.length === 0 ? (
+        <div className="w-full h-96 flex flex-col items-center justify-center mt-8 ">
+          <Image
+            src={emptyCart}
+            alt="no orders found"
+            className="w-96 h-auto"
           />
+          <p className="text-3xl text-gray-400 font-sans font-semibold">
+            No items found
+          </p>
         </div>
-      </div>
+      ) : (
+        <div>
+          <div className="flex space-x-4 mt-6 w-full justify-center items-center">
+            {steps.map((step, index) => {
+              const stepNumber = index + 1;
+              return (
+                <div
+                  key={step}
+                  className="flex items-center"
+                  onClick={() => handleStepClick(stepNumber)}
+                  style={{
+                    cursor: stepNumber <= currentStep ? "pointer" : "default",
+                  }}
+                >
+                  <div
+                    className={`h-8 w-8 rounded-full flex items-center justify-center border border-gray-500 ${
+                      currentStep >= stepNumber
+                        ? "bg-black text-white"
+                        : "bg-white text-black"
+                    }`}
+                  >
+                    {stepNumber}
+                  </div>
+                  <span
+                    className={`ml-2 ${
+                      currentStep >= stepNumber
+                        ? "text-brown-500"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {step}
+                  </span>
+                  {index < steps.length - 1 && (
+                    <hr className="w-10 mx-2 border-black" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <div className="w-full h-auto flex items-start justify-center mt-6">
+            <div className="w-[70%] h-auto p-6">
+              {currentStep === 1 && (
+                <ShowCartItems
+                  cart={cart!}
+                  productId={productId}
+                  setProductId={setProductId}
+                  handleAddToCart={handleAddToCart}
+                  fetchingCartData={fetchingCartData}
+                  setRemoveCompletely={setRemoveCompletely}
+                  handleRemoveFromCart={handleRemoveFromCart}
+                  incrementingCartItemSuccess={incrementingCartItemSuccess}
+                  decrementingCartItemSuccess={decrementingCartItemSuccess}
+                  incrementingCartItemQuantity={incrementingCartItemQuantity}
+                  decrementingCartItemQuantity={decrementingCartItemQuantity}
+                />
+              )}
+              {currentStep === 2 && (
+                <CartOfferHandler
+                  cart={cart!}
+                  applyingOffer={applyingOffer}
+                  removingOffer={removingOffer}
+                  handleApplyOffer={handleApplyOffer}
+                  handleRemoveOffer={handleRemoveOffer}
+                />
+              )}
+              {currentStep === 3 && (
+                <CartAddressHandler
+                  cart={cart!}
+                  applyingAddress={applyingAddress}
+                  handleApplyAddress={handleApplyAddress}
+                />
+              )}{" "}
+              {currentStep === 4 && (
+                <CartPlaceOrderHandler
+                  fulfillmentType={fulfillmentType}
+                  setFulfillmentType={(value: "PICKUP" | "DELIVERY") =>
+                    setFulfillmentType(value)
+                  }
+                  paymentMethod={paymentMethod}
+                  setPaymentMethod={(value: "COD" | "ONLINE") =>
+                    setPaymentMethod(value)
+                  }
+                  handlePlaceOrder={handlePlaceOrder}
+                />
+              )}
+            </div>
+            <CartSidebar
+              cart={cart!}
+              currentStep={currentStep}
+              handleContinue={handleContinue}
+              fetchingCartData={fetchingCartData}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

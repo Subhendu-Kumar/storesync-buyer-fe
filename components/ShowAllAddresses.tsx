@@ -241,7 +241,7 @@ const ShowAllAddresses = () => {
       </div>
       {fetching ? (
         <div className="w-full h-96 flex items-center justify-center">
-          <FaCircleNotch className="animate-spin text-7xl" />
+          <FaCircleNotch className="animate-spin text-3xl" />
         </div>
       ) : addresses.length === 0 ? (
         <div className="w-full h-96 flex flex-col items-center justify-center mt-8 ">

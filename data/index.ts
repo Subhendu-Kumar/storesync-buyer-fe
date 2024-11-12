@@ -1,5 +1,7 @@
 import { BsFillHddStackFill } from "react-icons/bs";
-import { FaMapLocationDot } from "react-icons/fa6";
+import { FaHandHoldingUsd, FaTruck } from "react-icons/fa";
+import { FaMapLocationDot, FaMoneyBillWave } from "react-icons/fa6";
+import { GiCardPickup } from "react-icons/gi";
 
 export const navitems = [
   {
@@ -26,5 +28,29 @@ export const profileNavItems = [
     name: "my addresses",
     path: "profile/addresses",
     icon: FaMapLocationDot,
+  },
+];
+
+export const steps = ["Cart", "Apply offer", "Address", "Payment"];
+
+export const paymentMethods = [
+  {
+    type: "COD",
+    icon: FaHandHoldingUsd,
+  },
+  {
+    type: "ONLINE",
+    icon: FaMoneyBillWave,
+  },
+];
+
+export const fulfillmentTypes = [
+  {
+    type: "DELIVERY",
+    icon: FaTruck,
+  },
+  {
+    type: "PICKUP",
+    icon: GiCardPickup,
   },
 ];

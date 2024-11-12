@@ -123,3 +123,53 @@ export interface DeliveryAddress {
   city: string;
   state: string;
 }
+
+export interface Order {
+  id: string;
+  orderAmt: number;
+  items: OrderItem[];
+  offer: Offer;
+  buyerAddress: Address;
+  status: "PENDING" | "CONFIRMED" | "SHIPPED" | "DELIVERED" | "CANCELLED"; // Add any other possible statuses
+  paymentMethod: "COD" | "ONLINE"; // Add any other possible payment methods
+  orderType: "DELIVERY" | "PICKUP"; // Add any other possible order types
+  customerName: string;
+  storeName: string;
+  createdAt: string; // Date in ISO string format
+}
+
+export interface OrderItem {
+  id: number;
+  productId: string;
+  qty: number;
+  price: number;
+  version: number;
+  productName: string;
+  productDescription: string;
+  productImage: string[];
+}
+
+export interface Offer {
+  id: string;
+  offerType: string;
+  offerName: string;
+  offerCode: string;
+  active: boolean;
+  percentageValue: number;
+  flatAmountValue: number;
+  minimumPurchaseAmount: number;
+  maximumDiscountAmount: number;
+}
+
+export interface Address {
+  id: number;
+  name: string;
+  mobileNo: number;
+  email: string;
+  address: string;
+  area: string;
+  landmark: string;
+  pinCode: number;
+  city: string;
+  state: string;
+}

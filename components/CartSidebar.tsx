@@ -1,6 +1,7 @@
 import { Cart } from "@/types";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 const CartSidebar = ({
   cart,
@@ -87,11 +88,15 @@ const CartSidebar = ({
       <div className="w-full border-t border-gray-500 border-dashed" />
       <Button
         onClick={handleContinue}
-        disabled={currentStep === 4 || fetchingCartData}
-        className="w-full"
+        disabled={fetchingCartData}
+        className={`w-full ${currentStep === 4 && "hidden"}`}
       >
         {!fetchingCartData ? "Continue" : <Skeleton className="w-full h-5" />}
       </Button>
+      <div className="w-full flex items-center justify-start text-base gap-2 text-gray-500 font-serif">
+        <RiVerifiedBadgeFill className="text-orange-500 text-lg" />
+        <p>You will earn Buysync Credit on this order</p>
+      </div>
     </div>
   );
 };

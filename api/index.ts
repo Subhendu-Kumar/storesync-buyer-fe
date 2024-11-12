@@ -157,6 +157,21 @@ export const getCart = async (user_id: string, store_id: string) => {
   }
 };
 
+export const applyAddressToCart = async (
+  user_id: string,
+  store_id: string,
+  address_id: number
+) => {
+  try {
+    const response = await API.patch(
+      `/users/${user_id}/cart?storeId=${store_id}&addressId=${address_id}&buyNow=false`
+    );
+    return response;
+  } catch (error) {
+    console.log("error ", error);
+  }
+};
+
 /*---------- offer services ----------*/
 export const getOffers = async (store_id: string) => {
   try {
@@ -223,17 +238,34 @@ export const deleteAddress = async (user_id: string, address_id: string) => {
   }
 };
 
-export const applyAddressToCart = async (
+/*---------- order services ----------*/
+export const placeOrder = async (
   user_id: string,
   store_id: string,
-  address_id: number
+  data: {
+    cartId: string;
+    fulfillmentType: "DELIVERY" | "PICKUP";
+    paymentMethod: "COD" | "ONLINE";
+  }
 ) => {
   try {
-    const response = await API.patch(
-      `/users/${user_id}/cart?storeId=${store_id}&addressId=${address_id}&buyNow=false`
+    const response = await API.post(
+      `/buyer/${user_id}/orders?storeId=${store_id}`,
+      data
     );
     return response;
   } catch (error) {
     console.log("error ", error);
+  }
+};
+
+export const getOrders = async (user_id: string, store_id: string) => {
+  try {
+    const response = await API.get(
+      `/buyer/${user_id}/orders?storeId=${store_id}`
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
   }
 };
