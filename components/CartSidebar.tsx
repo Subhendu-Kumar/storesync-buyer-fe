@@ -28,7 +28,7 @@ const CartSidebar = ({
               <span className="line-through text-gray-400">
                 &#8377;{totalActualPrice}
               </span>{" "}
-              &#8377;{cart?.total || 0.0}
+              &#8377;{cart?.subTotal || 0.0}
             </span>
           ) : (
             <Skeleton className="w-16 h-5" />
@@ -61,7 +61,7 @@ const CartSidebar = ({
         <h1 className="flex w-full items-center justify-between text-lg font-serif font-semibold text-black">
           <span>Grand total</span>
           {!fetchingCartData ? (
-            <span>&#8377;{cart?.subTotal || 0.0}</span>
+            <span>&#8377;{cart?.total || 0.0}</span>
           ) : (
             <Skeleton className="w-16 h-5" />
           )}
